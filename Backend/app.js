@@ -12,6 +12,7 @@ const MONGO_URL = "mongodb://127.0.0.1:27017/dreamstays";
 const Review = require("./models/review.js");
 
 const session = require("express-session");
+const flash = require("connect-flash");
 
 const listings = require("./routes/listing.js");
 const reviews = require("./routes/review.js");
@@ -47,10 +48,17 @@ const sessionOptions = {
   },
 };
 
-app.use(session(sessionOptions));
-
 app.get("/", (req, res) => {
   res.send("Hi, I am root");
+});
+
+app.use(session(sessionOptions));
+app.use(flash());
+
+app.use((req, res, next) => {
+  res.locals.success = req.flash("success");
+  console.log(res.locals.success);
+  next();
 });
 
 app.use("/listings", listings);
